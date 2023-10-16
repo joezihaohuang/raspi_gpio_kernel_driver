@@ -85,6 +85,8 @@ This is a basic example to get you started. In a real-world scenario, you may wa
 Be cautious when working with kernel modules, as an incorrect driver can potentially crash your system or damage hardware. It's crucial to have a good understanding of kernel development and to follow best practices and guidelines for writing Linux kernel modules.
 
 
+------------------------------------
+
 To use the user space program to control the LED using the Linux kernel driver you've created, you can interact with the driver through device files. Here's how you can do it:
 
 1. **Create a Device File:**
@@ -135,3 +137,56 @@ To use the user space program to control the LED using the Linux kernel driver y
    Make sure your user program has the necessary permissions to open and write to the device file. You may need to run it with `sudo` if you encounter permission issues.
 
 By using this approach, you can control the LED from user space through the device file associated with your kernel module. This provides a way to interact with the driver and control the LED using user programs.
+
+------------------------------------
+
+Setting up a cross-compiler allows you to compile code for a target architecture (e.g., ARM for the Raspberry Pi) on a different host system (e.g., x86_64). Here's a general guide to set up a cross-compiler for the Raspberry Pi:
+
+1. **Choose the Cross-Compiler:**
+   You need a cross-compiler that is built for your target architecture. For Raspberry Pi (Raspbian OS), you can use the official toolchains provided by the Raspberry Pi Foundation or Linaro. For example, the "arm-linux-gnueabihf" toolchain is commonly used. Download it from their respective websites.
+
+2. **Install Required Libraries:**
+   Ensure that you have the required libraries installed on your host system, such as `build-essential` and `g++-multilib`.
+
+   ```bash
+   sudo apt-get update
+   sudo apt-get install build-essential
+   sudo apt-get install g++-multilib
+   ```
+
+3. **Set Environment Variables:**
+   Extract the downloaded toolchain and set environment variables to point to it. Replace `/path/to/toolchain` with the actual path to your cross-compiler:
+
+   ```bash
+   export PATH=$PATH:/path/to/toolchain/bin
+   export CROSS_COMPILE=arm-linux-gnueabihf-
+   ```
+
+   These environment variables help your build system use the cross-compiler instead of the native compiler.
+
+4. **Test the Cross-Compiler:**
+   Verify that your cross-compiler is correctly set up by running:
+
+   ```bash
+   arm-linux-gnueabihf-gcc --version
+   ```
+
+   You should see information about the cross-compiler version without errors.
+
+5. **Compile Code:**
+   You can now use the cross-compiler to build code for the Raspberry Pi. For example, to compile a C program:
+
+   ```bash
+   arm-linux-gnueabihf-gcc -o my_program my_program.c
+   ```
+
+6. **Transfer and Run on the Raspberry Pi:**
+   Transfer the compiled binary to your Raspberry Pi using `scp` or any other method, and then execute it on the Raspberry Pi.
+
+   ```bash
+   scp my_program pi@<Raspberry_Pi_IP>:~/path/to/destination/
+   ssh pi@<Raspberry_Pi_IP>
+   ./path/to/destination/my_program
+   ```
+
+This setup enables you to compile code for your target architecture on your host system. Make sure to select the correct toolchain for your specific Raspberry Pi version and architecture. The exact steps might vary slightly depending on the toolchain and host operating system you are using.
